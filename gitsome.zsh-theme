@@ -4,7 +4,32 @@ function git_prompt_info() {
   echo "$ZSH_THEME_GIT_PROMPT_PREFIX$(parse_git_dirty)${ref#refs/heads/}$(git_prompt_status)$ZSH_THEME_GIT_PROMPT_SUFFIX"
 }
 
-PROMPT='%{$fg[blue]%}%1~%{$reset_color%}$(git_prompt_info)%{$reset_color%} %{$fg[cyan]%}::%{$reset_color%} '
+function ssh_connection() {
+  if [[ -n $SSH_CONNECTION ]]; then
+    echo "%{$fg_bold[red]%}(ssh) "
+  fi
+}
+
+function nvm_status() {
+  $(type nvm >/dev/null 2>&1) || return
+
+  local nvm_status=$(nvm current 2>/dev/null)
+  [[ "${nvm_status}" == "system" ]] && return
+  nvm_status=${nvm_status}
+
+  echo -n "%{$fg_bold[green]%}"
+  echo -n "⬢ ${nvm_status}"
+  echo -n "%{$reset_color%}"
+}
+
+function return_status() {
+  echo -n "%(?.%{$fg[cyan]%}.%{$fg[red]%})"
+  echo -n " %B❯%b "
+  echo    "%{$reset_color%}"
+}
+
+PROMPT='${ssh_connection}%{$fg[blue]%}%1~%{$reset_color%}$(git_prompt_info)%{$reset_color%}$(return_status)'
+RPROMPT='$(nvm_status)'
 
 ZSH_THEME_GIT_PROMPT_PREFIX=" "
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
