@@ -1,7 +1,8 @@
-[color]
-	ui = true
+# This is Git's per-user configuration file.
 [user]
 	name = Milan Darjanin
 	email = me@milandarjanin.com
 [push]
-	default = simple
+	default = current
+[core]
+	editor = /usr/bin/vim
